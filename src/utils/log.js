@@ -1,7 +1,7 @@
-export const error = (msg) => {
+export function error(msg) {
   console.error(`Conversion: ${msg}`);
 };
 
-export const info = (msg) => {
+export function info(msg) {
   console.info(`Conversion: ${msg}`);
 };
