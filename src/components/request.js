@@ -1,4 +1,5 @@
 import { isFunction } from "../utils/type";
+import { error } from "../utils/log";
 
 export function request(url, callback, failCallback) {
 
@@ -6,16 +7,32 @@ export function request(url, callback, failCallback) {
 
   const pageLoaded = () => {
     if (xhttp.status >= 200 && xhttp.status < 400) {
-      if (isFunction(callback)) callback(xhttp.responseText, url);
+
+      if (isFunction(callback)) {
+        callback(xhttp.responseText, url);
+      } else {
+        error('callback for request is not a function');
+      }
+
     } else if (xhttp.status == 404) {
-      if (isFunction(failCallback)) failCallback(url);
+
+      if (isFunction(failCallback)) {
+        failCallback(url);
+      } else {
+        error('fail callback for request is not a function');
+      }
+
     }
   };
 
   xhttp.addEventListener('load', pageLoaded);
 
   xhttp.onerror = function() {
-    if (isFunction(failCallback)) failCallback(url);
+    if (isFunction(failCallback)) {
+      failCallback(url);
+    } else {
+      error('fail callback for request is not a function');
+    }
   };
 
   xhttp.open("GET", url, true);
