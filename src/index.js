@@ -1,6 +1,7 @@
 import defaults from './defaults';
 import {mergeOptions} from "./utils/object";
 import EventBus from "./components/eventBus";
+import {request} from "./components/request";
 
 export default class Conversion {
   constructor(options) {
@@ -8,16 +9,17 @@ export default class Conversion {
     this.eventBus = new EventBus();
 
     this.disabled = false;
-    this.hostName = location.hostname;
-
     this.links = [];
     this.oldLinks = [];
 
-    this.dom = {};
+    this._isBack = false;
+    this._hostName = location.hostname;
+    this._dom = {};
   }
 
   init() {
-    this.dom = this.initDom();
+    this._dom = this._initDom();
+    this._initLinks();
   }
 
   update(options = {}) {
@@ -36,13 +38,75 @@ export default class Conversion {
     this.disabled = false;
   }
 
-  initDom() {
+  _initDom() {
     let dom = {};
     dom.body = document.getElementsByTagName('body')[0];
-    dom.bgBody = document.querySelector('.bg-page');
-    dom.header = document.getElementsByTagName('header')[0];
-    dom.overlay = this.DOM.body.querySelector(this.options.overlay);
-    dom.containerToInsert = this.DOM.body.querySelector(this.options.containerToInsert);
+    dom.containerToInsert = dom.body.querySelector(this.options.containerToInsert);
     return dom;
+  }
+
+  _initLinks() {
+    this.links = this._dom.containerToInsert.getElementsByTagName('a');
+    if (this.links.length <= 0 ) return null;
+    Array.prototype.forEach.call(this.links, this._handleLink);
+  }
+
+  _isDisableAjax(link, url) {
+    return url.indexOf('#') >= 0 ||
+      url.indexOf(this.hostName) < 0 ||
+      link.getAttribute(this.options.disableAttribute);
+  }
+
+  _handleLink(link) {
+    const url = link.href;
+    if (this._isDisableAjax(link, url)) return null;
+    link.addEventListener('click', this._handleLinkClick);
+  }
+
+  _handleLinkClick(e) {
+    e.preventDefault();
+    const url = e.currentTarget.href;
+    this._isBack = false;
+    this._getContent(url);
+  }
+
+  _getContent(url) {
+    // TODO emit event request.start
+
+    request(url, this._getContentSuccess, this._getContentFail);
+  }
+
+  _getContentSuccess(response, url) {
+    // TODO emit event request.success with data - response
+
+    if (this.options.scrollToTop) {
+      window.scrollTo(0, 0);
+    }
+
+    let fragment = document.createElement('html');
+    fragment.innerHTML = response;
+
+    const responseContainer = fragment.querySelector(this.options.containerToInsert);
+
+    if (!responseContainer) return null;
+
+    this.DOM.containerToInsert.innerHTML = responseContainer.innerHTML;
+
+    this.DOM.body.classList = responseBody.classList; // set body classes
+
+    if (this._isBack) {
+      this.oldLinks.pop();
+    } else {
+      this.oldLinks.push(window.location.href);
+    }
+
+    window.history.pushState(null, null, url);
+    this._initLinks(); // reinit all links
+
+    // TODO emit event content:inserted
+  }
+
+  _getContentFail() {
+    // TODO emit event request.fail
   }
 }
