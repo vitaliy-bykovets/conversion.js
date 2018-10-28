@@ -20,6 +20,7 @@ export default class Conversion {
   init() {
     this._dom = this._initDom();
     this._initLinks();
+    this.eventBus.emit('init.finished');
   }
 
   update(options = {}) {
@@ -71,13 +72,13 @@ export default class Conversion {
   }
 
   _getContent(url) {
-    // TODO emit event request.start
+    this.eventBus.emit('request.start');
 
     request(url, this._getContentSuccess, this._getContentFail);
   }
 
   _getContentSuccess(response, url) {
-    // TODO emit event request.success with data - response
+    this.eventBus.emit('request.success');
 
     if (this.options.scrollToTop) {
       window.scrollTo(0, 0);
@@ -103,10 +104,10 @@ export default class Conversion {
     window.history.pushState(null, null, url);
     this._initLinks(); // reinit all links
 
-    // TODO emit event content:inserted
+    this.eventBus.emit('content.inserted');
   }
 
   _getContentFail() {
-    // TODO emit event request.fail
+    this.eventBus.emit('request.fail');
   }
 }
