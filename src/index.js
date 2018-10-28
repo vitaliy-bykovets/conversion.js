@@ -101,7 +101,9 @@ export default class Conversion {
       this.oldLinks.push(window.location.href);
     }
 
-    window.history.pushState(null, null, url);
+    if (this.options.saveBack) {
+      window.history.pushState(null, null, url);
+    }
     this._initLinks(); // reinit all links
 
     this.eventBus.emit('content.inserted');
