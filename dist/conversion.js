@@ -6,7 +6,9 @@
 
   var defaults = {
     containerToInsert: '.js-content-insert',
+    containerToSearchLinks: 'body',
     disableAttribute: 'data-ajax-disabled',
+    saveBack: true,
     scrollToTop: true
   };
 
@@ -65,6 +67,7 @@
     }, {
       key: "emit",
       value: function emit(event) {
+        if (!this.events[event]) return null;
         this.events[event]();
       }
     }]);
@@ -121,6 +124,13 @@
       this._isBack = false;
       this._hostName = location.hostname;
       this._dom = {};
+
+      this._isDisableAjax = this._isDisableAjax.bind(this);
+      this._handleLink = this._handleLink.bind(this);
+      this._handleLinkClick = this._handleLinkClick.bind(this);
+      this._getContentSuccess = this._getContentSuccess.bind(this);
+      this._getContentSuccess = this._getContentSuccess.bind(this);
+      this._getContentFail = this._getContentFail.bind(this);
     }
 
     createClass(Conversion, [{
@@ -128,6 +138,7 @@
       value: function init() {
         this._dom = this._initDom();
         this._initLinks();
+        this.eventBus.emit('init.finished');
       }
     }, {
       key: "update",
@@ -156,20 +167,21 @@
       value: function _initDom() {
         var dom = {};
         dom.body = document.getElementsByTagName('body')[0];
-        dom.containerToInsert = dom.body.querySelector(this.options.containerToInsert);
+        dom.containerToSearchLinks = document.querySelector(this.options.containerToSearchLinks);
+        dom.containerToInsert = document.querySelector(this.options.containerToInsert);
         return dom;
       }
     }, {
       key: "_initLinks",
       value: function _initLinks() {
-        this.links = this._dom.containerToInsert.getElementsByTagName('a');
+        this.links = this._dom.containerToSearchLinks.getElementsByTagName('a');
         if (this.links.length <= 0) return null;
         Array.prototype.forEach.call(this.links, this._handleLink);
       }
     }, {
       key: "_isDisableAjax",
       value: function _isDisableAjax(link, url) {
-        return url.indexOf('#') >= 0 || url.indexOf(this.hostName) < 0 || link.getAttribute(this.options.disableAttribute);
+        return url.indexOf('#') >= 0 || url.indexOf(this._hostName) < 0 || link.getAttribute(this.options.disableAttribute);
       }
     }, {
       key: "_handleLink",
@@ -189,14 +201,14 @@
     }, {
       key: "_getContent",
       value: function _getContent(url) {
-        // TODO emit event request.start
+        this.eventBus.emit('request.start');
 
         request(url, this._getContentSuccess, this._getContentFail);
       }
     }, {
       key: "_getContentSuccess",
       value: function _getContentSuccess(response, url) {
-        // TODO emit event request.success with data - response
+        this.eventBus.emit('request.success');
 
         if (this.options.scrollToTop) {
           window.scrollTo(0, 0);
@@ -209,9 +221,7 @@
 
         if (!responseContainer) return null;
 
-        this.DOM.containerToInsert.innerHTML = responseContainer.innerHTML;
-
-        this.DOM.body.classList = responseBody.classList; // set body classes
+        this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
         if (this._isBack) {
           this.oldLinks.pop();
@@ -219,15 +229,17 @@
           this.oldLinks.push(window.location.href);
         }
 
-        window.history.pushState(null, null, url);
+        if (this.options.saveBack) {
+          window.history.pushState(null, null, url);
+        }
         this._initLinks(); // reinit all links
 
-        // TODO emit event content:inserted
+        this.eventBus.emit('content.inserted');
       }
     }, {
       key: "_getContentFail",
       value: function _getContentFail() {
-        // TODO emit event request.fail
+        this.eventBus.emit('request.fail');
       }
     }]);
     return Conversion;

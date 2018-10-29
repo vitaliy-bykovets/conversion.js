@@ -16,6 +16,7 @@ export default class EventBus {
   }
 
   emit(event) {
+    if (!this.events[event]) return null;
     this.events[event]();
   }
 }

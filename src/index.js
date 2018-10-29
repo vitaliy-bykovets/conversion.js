@@ -15,6 +15,13 @@ export default class Conversion {
     this._isBack = false;
     this._hostName = location.hostname;
     this._dom = {};
+
+    this._isDisableAjax = this._isDisableAjax.bind(this);
+    this._handleLink = this._handleLink.bind(this);
+    this._handleLinkClick = this._handleLinkClick.bind(this);
+    this._getContentSuccess = this._getContentSuccess.bind(this);
+    this._getContentSuccess = this._getContentSuccess.bind(this);
+    this._getContentFail = this._getContentFail.bind(this);
   }
 
   init() {
@@ -42,19 +49,20 @@ export default class Conversion {
   _initDom() {
     let dom = {};
     dom.body = document.getElementsByTagName('body')[0];
-    dom.containerToInsert = dom.body.querySelector(this.options.containerToInsert);
+    dom.containerToSearchLinks = document.querySelector(this.options.containerToSearchLinks);
+    dom.containerToInsert = document.querySelector(this.options.containerToInsert);
     return dom;
   }
 
   _initLinks() {
-    this.links = this._dom.containerToInsert.getElementsByTagName('a');
+    this.links = this._dom.containerToSearchLinks.getElementsByTagName('a');
     if (this.links.length <= 0 ) return null;
     Array.prototype.forEach.call(this.links, this._handleLink);
   }
 
   _isDisableAjax(link, url) {
     return url.indexOf('#') >= 0 ||
-      url.indexOf(this.hostName) < 0 ||
+      url.indexOf(this._hostName) < 0 ||
       link.getAttribute(this.options.disableAttribute);
   }
 
@@ -91,9 +99,7 @@ export default class Conversion {
 
     if (!responseContainer) return null;
 
-    this.DOM.containerToInsert.innerHTML = responseContainer.innerHTML;
-
-    this.DOM.body.classList = responseBody.classList; // set body classes
+    this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
     if (this._isBack) {
       this.oldLinks.pop();
