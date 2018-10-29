@@ -15,8 +15,8 @@ export default class EventBus {
     }
   }
 
-  emit(event) {
+  emit(event, context = {}) {
     if (!this.events[event]) return null;
-    this.events[event]();
+    this.events[event](context);
   }
 }

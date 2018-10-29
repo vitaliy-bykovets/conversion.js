@@ -67,8 +67,10 @@
     }, {
       key: "emit",
       value: function emit(event) {
+        var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
         if (!this.events[event]) return null;
-        this.events[event]();
+        this.events[event](context);
       }
     }]);
     return EventBus;
@@ -187,6 +189,7 @@
       key: "_handleLink",
       value: function _handleLink(link) {
         var url = link.href;
+        if (this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1] === url) return null;
         if (this._isDisableAjax(link, url)) return null;
         link.addEventListener('click', this._handleLinkClick);
       }

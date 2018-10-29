@@ -26,7 +26,11 @@
 
     <script src="./conversion.js"></script>
     <script>
-        var conversion = new Conversion().init();
+        var conversion = new Conversion();
+        conversion.init();
+        conversion.on('request.start', function () {
+          console.log('request start', this);
+        })
     </script>
 </body>
 </html>

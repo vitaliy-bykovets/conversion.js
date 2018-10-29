@@ -68,6 +68,7 @@ export default class Conversion {
 
   _handleLink(link) {
     const url = link.href;
+    if (this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1] === url) return null;
     if (this._isDisableAjax(link, url)) return null;
     link.addEventListener('click', this._handleLinkClick);
   }
