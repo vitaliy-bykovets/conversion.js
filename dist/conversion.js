@@ -121,10 +121,10 @@
 
       this.disabled = false;
       this.links = [];
-      this.oldLinks = [];
+      this.oldLinks = [window.location.href];
 
       this._isBack = false;
-      this._hostName = location.hostname;
+      this._hostName = window.location.hostname;
       this._dom = {};
 
       this._isDisableAjax = this._isDisableAjax.bind(this);
@@ -140,6 +140,7 @@
       value: function init() {
         this._dom = this._initDom();
         this._initLinks();
+        if (this.options.saveBack) this._initWindowPopStateHandler();
         this.eventBus.emit('init.finished');
       }
     }, {
@@ -181,6 +182,18 @@
         Array.prototype.forEach.call(this.links, this._handleLink);
       }
     }, {
+      key: "_initWindowPopStateHandler",
+      value: function _initWindowPopStateHandler() {
+        var _this = this;
+
+        window.onpopstate = function () {
+          if (_this._prevOldLink) {
+            _this._isBack = true;
+            _this._getContent(_this._prevOldLink);
+          }
+        };
+      }
+    }, {
       key: "_isDisableAjax",
       value: function _isDisableAjax(link, url) {
         return url.indexOf('#') >= 0 || url.indexOf(this._hostName) < 0 || link.getAttribute(this.options.disableAttribute);
@@ -189,7 +202,6 @@
       key: "_handleLink",
       value: function _handleLink(link) {
         var url = link.href;
-        if (this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1] === url) return null;
         if (this._isDisableAjax(link, url)) return null;
         link.addEventListener('click', this._handleLinkClick);
       }
@@ -198,7 +210,7 @@
       value: function _handleLinkClick(e) {
         e.preventDefault();
         var url = e.currentTarget.href;
-        this._isBack = false;
+        if (this._lastOldLink === url) return null;
         this._getContent(url);
       }
     }, {
@@ -217,32 +229,47 @@
           window.scrollTo(0, 0);
         }
 
-        var fragment = document.createElement('html');
-        fragment.innerHTML = response;
-
-        var responseContainer = fragment.querySelector(this.options.containerToInsert);
-
+        var responseContainer = this._getContentFragment(response);
         if (!responseContainer) return null;
 
         this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
-        if (this._isBack) {
-          this.oldLinks.pop();
-        } else {
-          this.oldLinks.push(window.location.href);
-        }
-
         if (this.options.saveBack) {
           window.history.pushState(null, null, url);
         }
-        this._initLinks(); // reinit all links
 
+        if (this._isBack) {
+          this.oldLinks.pop();
+        } else {
+          this.oldLinks.push(url);
+        }
+
+        this._initLinks();
         this.eventBus.emit('content.inserted');
+        this._isBack = false;
       }
     }, {
       key: "_getContentFail",
       value: function _getContentFail() {
         this.eventBus.emit('request.fail');
+      }
+    }, {
+      key: "_getContentFragment",
+      value: function _getContentFragment(content) {
+        var fragment = document.createElement('html');
+        fragment.innerHTML = content;
+
+        return fragment.querySelector(this.options.containerToInsert);
+      }
+    }, {
+      key: "_lastOldLink",
+      get: function get$$1() {
+        return this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1];
+      }
+    }, {
+      key: "_prevOldLink",
+      get: function get$$1() {
+        return this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 2];
       }
     }]);
     return Conversion;

@@ -10,10 +10,10 @@ export default class Conversion {
 
     this.disabled = false;
     this.links = [];
-    this.oldLinks = [];
+    this.oldLinks = [window.location.href];
 
     this._isBack = false;
-    this._hostName = location.hostname;
+    this._hostName = window.location.hostname;
     this._dom = {};
 
     this._isDisableAjax = this._isDisableAjax.bind(this);
@@ -27,6 +27,7 @@ export default class Conversion {
   init() {
     this._dom = this._initDom();
     this._initLinks();
+    if (this.options.saveBack) this._initWindowPopStateHandler();
     this.eventBus.emit('init.finished');
   }
 
@@ -60,6 +61,15 @@ export default class Conversion {
     Array.prototype.forEach.call(this.links, this._handleLink);
   }
 
+  _initWindowPopStateHandler() {
+    window.onpopstate = () => {
+      if (this._prevOldLink) {
+        this._isBack = true;
+        this._getContent(this._prevOldLink);
+      }
+    };
+  }
+
   _isDisableAjax(link, url) {
     return url.indexOf('#') >= 0 ||
       url.indexOf(this._hostName) < 0 ||
@@ -68,7 +78,6 @@ export default class Conversion {
 
   _handleLink(link) {
     const url = link.href;
-    if (this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1] === url) return null;
     if (this._isDisableAjax(link, url)) return null;
     link.addEventListener('click', this._handleLinkClick);
   }
@@ -76,7 +85,7 @@ export default class Conversion {
   _handleLinkClick(e) {
     e.preventDefault();
     const url = e.currentTarget.href;
-    this._isBack = false;
+    if (this._lastOldLink === url) return null;
     this._getContent(url);
   }
 
@@ -93,30 +102,42 @@ export default class Conversion {
       window.scrollTo(0, 0);
     }
 
-    let fragment = document.createElement('html');
-    fragment.innerHTML = response;
-
-    const responseContainer = fragment.querySelector(this.options.containerToInsert);
-
+    const responseContainer = this._getContentFragment(response);
     if (!responseContainer) return null;
 
     this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
-    if (this._isBack) {
-      this.oldLinks.pop();
-    } else {
-      this.oldLinks.push(window.location.href);
-    }
-
     if (this.options.saveBack) {
       window.history.pushState(null, null, url);
     }
-    this._initLinks(); // reinit all links
 
+    if (this._isBack) {
+      this.oldLinks.pop();
+    } else {
+      this.oldLinks.push(url);
+    }
+
+    this._initLinks();
     this.eventBus.emit('content.inserted');
+    this._isBack = false;
   }
 
   _getContentFail() {
     this.eventBus.emit('request.fail');
+  }
+
+  _getContentFragment(content) {
+    let fragment = document.createElement('html');
+    fragment.innerHTML = content;
+
+    return fragment.querySelector(this.options.containerToInsert);
+  }
+
+  get _lastOldLink() {
+    return this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1];
+  }
+
+  get _prevOldLink() {
+    return this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 2];
   }
 }
