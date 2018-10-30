@@ -1,7 +1,7 @@
 export function error(msg) {
-  console.error(`Conversion: ${msg}`);
+  console.error(`conversion.js: ${msg}`);
 };
 
 export function info(msg) {
-  console.info(`Conversion: ${msg}`);
+  console.info(`conversion.js: ${msg}`);
 };

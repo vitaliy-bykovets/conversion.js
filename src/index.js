@@ -6,12 +6,11 @@ import {request} from "./components/request";
 export default class Conversion {
   constructor(options) {
     this.options = mergeOptions(defaults, options);
-    this.eventBus = new EventBus();
-
     this.disabled = false;
     this.links = [];
     this.oldLinks = [window.location.href];
 
+    this._eventBus = new EventBus();
     this._isBack = false;
     this._hostName = window.location.hostname;
     this._dom = {};
@@ -28,7 +27,7 @@ export default class Conversion {
     this._dom = this._initDom();
     this._initLinks();
     if (this.options.saveBack) this._initWindowPopStateHandler();
-    this.eventBus.emit('init.finished');
+    this._eventBus.emit('init.finished');
   }
 
   update(options = {}) {
@@ -36,7 +35,7 @@ export default class Conversion {
   }
 
   on(event, handler) {
-    this.eventBus.on(event, handler);
+    this._eventBus.on(event, handler);
   }
 
   disable() {
@@ -90,13 +89,13 @@ export default class Conversion {
   }
 
   _getContent(url) {
-    this.eventBus.emit('request.start');
+    this._eventBus.emit('request.start');
 
     request(url, this._getContentSuccess, this._getContentFail);
   }
 
   _getContentSuccess(response, url) {
-    this.eventBus.emit('request.success');
+    this._eventBus.emit('request.success');
 
     if (this.options.scrollToTop) {
       window.scrollTo(0, 0);
@@ -118,12 +117,12 @@ export default class Conversion {
     }
 
     this._initLinks();
-    this.eventBus.emit('content.inserted');
+    this._eventBus.emit('content.inserted');
     this._isBack = false;
   }
 
   _getContentFail() {
-    this.eventBus.emit('request.fail');
+    this._eventBus.emit('request.fail');
   }
 
   _getContentFragment(content) {

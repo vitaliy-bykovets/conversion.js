@@ -9,7 +9,7 @@
     "build": "npm run build:dist && npm run build:dist:min",
     "build:dist": "node_modules/.bin/rollup --config config/rollup.config.js",
     "build:dist:min": "node_modules/.bin/rollup --config config/rollup.config.min.js",
-    "demo:server": "node_modules/.bin/browser-sync start -s 'demo' --serveStatic 'dist' -f 'demo/*.*' 'dist/conversion.js'"
+    "demo:server": "node_modules/.bin/browser-sync start -s 'demo' --serveStatic 'dist' -f 'demo/**/*.*' 'dist/conversion.js'"
   },
   "watch": {
     "build": "src/**/*.js"

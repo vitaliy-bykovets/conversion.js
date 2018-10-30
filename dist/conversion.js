@@ -21,7 +21,7 @@
   }
 
   function error(msg) {
-    console.error("Conversion: " + msg);
+    console.error("conversion.js: " + msg);
   }
 
   var classCallCheck = function (instance, Constructor) {
@@ -69,7 +69,15 @@
       value: function emit(event) {
         var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-        if (!this.events[event]) return null;
+        if (!this.events[event]) {
+          return null;
+        }
+
+        if (!isFunction(this.events[event])) {
+          error("handler for " + event + " event isn't a function");
+          return null;
+        }
+
         this.events[event](context);
       }
     }]);
@@ -117,12 +125,11 @@
       classCallCheck(this, Conversion);
 
       this.options = mergeOptions(defaults, options);
-      this.eventBus = new EventBus();
-
       this.disabled = false;
       this.links = [];
       this.oldLinks = [window.location.href];
 
+      this._eventBus = new EventBus();
       this._isBack = false;
       this._hostName = window.location.hostname;
       this._dom = {};
@@ -141,7 +148,7 @@
         this._dom = this._initDom();
         this._initLinks();
         if (this.options.saveBack) this._initWindowPopStateHandler();
-        this.eventBus.emit('init.finished');
+        this._eventBus.emit('init.finished');
       }
     }, {
       key: "update",
@@ -153,7 +160,7 @@
     }, {
       key: "on",
       value: function on(event, handler) {
-        this.eventBus.on(event, handler);
+        this._eventBus.on(event, handler);
       }
     }, {
       key: "disable",
@@ -216,14 +223,14 @@
     }, {
       key: "_getContent",
       value: function _getContent(url) {
-        this.eventBus.emit('request.start');
+        this._eventBus.emit('request.start');
 
         request(url, this._getContentSuccess, this._getContentFail);
       }
     }, {
       key: "_getContentSuccess",
       value: function _getContentSuccess(response, url) {
-        this.eventBus.emit('request.success');
+        this._eventBus.emit('request.success');
 
         if (this.options.scrollToTop) {
           window.scrollTo(0, 0);
@@ -245,13 +252,13 @@
         }
 
         this._initLinks();
-        this.eventBus.emit('content.inserted');
+        this._eventBus.emit('content.inserted');
         this._isBack = false;
       }
     }, {
       key: "_getContentFail",
       value: function _getContentFail() {
-        this.eventBus.emit('request.fail');
+        this._eventBus.emit('request.fail');
       }
     }, {
       key: "_getContentFragment",

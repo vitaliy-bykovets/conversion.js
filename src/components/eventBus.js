@@ -16,7 +16,16 @@ export default class EventBus {
   }
 
   emit(event, context = {}) {
-    if (!this.events[event]) return null;
+    if (!this.events[event]) {
+      return null;
+    }
+
+    if (!isFunction(this.events[event])) {
+      error(`handler for ${event} event isn't a function`);
+      return null;
+    }
+
+
     this.events[event](context);
   }
 }
