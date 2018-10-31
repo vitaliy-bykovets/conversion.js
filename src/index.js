@@ -96,6 +96,7 @@ export default class Conversion {
 
   _getContentSuccess(response, url) {
     this._eventBus.emit('request.success');
+    this._eventBus.emit('content.start');
 
     if (this.options.scrollToTop) {
       window.scrollTo(0, 0);

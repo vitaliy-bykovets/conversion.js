@@ -1,31 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Conversion.js - Demo Sample</title>
+  <meta charset="UTF-8">
+  <title>Conversion.js - Demo Sample</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Playfair+Display:700" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/app.css">
 </head>
-<body>
-    <header>
-        <h1><a href="/">Home page</a></h1>
-        <nav>
-            <ul>
-                <li><a href="./about.html" title="About">About</a></li>
-                <li><a href="./services.html" title="Services">Services</a></li>
-                <li><a href="./contact.html" title="Contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-      <section class="js-content-insert">
-        <h1>Services page</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet facilisis lacus, vel ultricies libero. Phasellus faucibus porttitor tellus ac eleifend. Nunc lobortis ullamcorper augue, a dignissim ante tincidunt sed. Maecenas ornare pretium ornare. Vestibulum nec neque sagittis augue sodales feugiat. Vivamus iaculis mauris sed purus cursus, eget sollicitudin velit posuere. Nulla lobortis ullamcorper massa, ac lacinia erat ornare et. Fusce in nisl in ligula tincidunt tempor nec nec nunc. Mauris a mattis tellus. Aenean vitae congue augue. Etiam sed venenatis ipsum. Sed et congue ex. Cras ut egestas enim, vitae congue justo. Nullam maximus diam sit amet nisi congue tristique. Etiam eget ornare metus, at placerat libero.</p>
-        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed vitae consectetur massa. Nulla molestie ut metus eget condimentum. Donec rutrum mauris ut ornare molestie. Aliquam et ex ac risus efficitur iaculis eget sit amet mi. Integer ut augue in nisl rutrum convallis. Nam ornare diam eget libero ultricies, sed eleifend ligula varius. In accumsan tellus ac mi aliquam, et congue nisl congue. Mauris sed elementum tortor.</p>
-      </section>
-    </main>
 
-    <script src="./conversion.js"></script>
-    <script>
-      var conversion = new Conversion().init();
-    </script>
+<body class="bg-additional">
+
+<header class="header">
+  <div class="container">
+    <div class="header__inner">
+      <h1 class="logo">
+        <a href="/">
+          <img src="./assets/logo.svg" alt="">
+        </a>
+      </h1>
+      <nav class="nav">
+        <ul class="nav__list">
+          <li>
+            <a class="link-underline" href="./about.html" title="About"><span>About</span></a>
+          </li>
+          <li class="active">
+            <a class="link-underline" href="./services.html" title="Services"><span>Services</span></a>
+          </li>
+          <li>
+            <a class="link-underline" href="./contact.html" title="Contact"><span>Contact</span></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="section js-content-insert">
+    <div class="container">
+      <div class="flex-container">
+        <div class="flex-block">
+          <div class="img-wrapper">
+            <img src="https://unsplash.com/photos/r79g5WwWvxc/download?force=true" alt="">
+            <a href="https://unsplash.com/@heysupersimi" class="author" target="_blank">Simone Hutsch</a>
+          </div>
+        </div>
+        <div class="flex-block">
+          <h2 class="section__title">Services page</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet facilisis lacus, vel ultricies
+            libero. Phasellus faucibus porttitor tellus ac eleifend. Nunc lobortis ullamcorper augue, a dignissim ante
+            tincidunt sed. Maecenas ornare pretium ornare. Vestibulum nec neque sagittis augue sodales feugiat. Vivamus
+            iaculis mauris sed purus cursus, eget sollicitudin velit posuere. Nulla lobortis ullamcorper massa, ac lacinia
+            erat ornare et. Fusce in nisl in ligula tincidunt tempor nec nec nunc. Mauris a mattis tellus. Aenean vitae
+            congue
+            augue. Etiam sed venenatis ipsum. Sed et congue ex. Cras ut egestas enim, vitae congue justo. Nullam maximus
+            diam
+            sit amet nisi congue tristique. Etiam eget ornare metus, at placerat libero.</p>
+          <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante
+            ipsum primis in faucibus orci luctus et ultrices
+            <a class="link-underline" href="/" title="Disabled Page Transition" data-ajax-disabled><span>Homepage (Ajax Disabled)</span></a>
+            posuere cubilia Curae; Sed vitae consectetur massa. Nulla
+            molestie ut metus eget condimentum. Donec rutrum mauris ut ornare molestie. Aliquam et ex ac risus efficitur
+            iaculis eget sit amet mi. Integer ut augue in nisl rutrum convallis. Nam ornare diam eget libero ultricies, sed
+            eleifend ligula varius. In accumsan tellus ac mi aliquam, et congue nisl congue. Mauris sed elementum
+            tortor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <a href="https://github.com/vitaliy-bykovets/conversion.js" target="_blank">Conversion.js Demo page</a>
+</footer>
+
+<script src="/conversion.js"></script>
+<script src="./assets/app.js"></script>
 </body>
 </html>
