@@ -237,7 +237,9 @@
           window.scrollTo(0, 0);
         }
 
-        var responseContainer = this._getContentFragment(response);
+        var fragment = this._getContentFragment(response);
+        var responseContainer = fragment.querySelector(this.options.containerToInsert);
+
         if (!responseContainer) return null;
 
         this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
@@ -253,7 +255,7 @@
         }
 
         this._initLinks();
-        this._eventBus.emit('content.inserted');
+        this._eventBus.emit('content.inserted', fragment);
         this._isBack = false;
       }
     }, {
@@ -267,7 +269,7 @@
         var fragment = document.createElement('html');
         fragment.innerHTML = content;
 
-        return fragment.querySelector(this.options.containerToInsert);
+        return fragment;
       }
     }, {
       key: "_lastOldLink",

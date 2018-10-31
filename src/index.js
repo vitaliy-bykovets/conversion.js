@@ -102,7 +102,9 @@ export default class Conversion {
       window.scrollTo(0, 0);
     }
 
-    const responseContainer = this._getContentFragment(response);
+    const fragment = this._getContentFragment(response);
+    const responseContainer = fragment.querySelector(this.options.containerToInsert);
+
     if (!responseContainer) return null;
 
     this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
@@ -118,7 +120,7 @@ export default class Conversion {
     }
 
     this._initLinks();
-    this._eventBus.emit('content.inserted');
+    this._eventBus.emit('content.inserted', fragment);
     this._isBack = false;
   }
 
@@ -130,7 +132,7 @@ export default class Conversion {
     let fragment = document.createElement('html');
     fragment.innerHTML = content;
 
-    return fragment.querySelector(this.options.containerToInsert);
+    return fragment;
   }
 
   get _lastOldLink() {

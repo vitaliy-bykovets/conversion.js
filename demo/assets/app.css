@@ -160,7 +160,11 @@ p .link-underline {
   padding: 0 4px;
 }
 
-.nav__list li:not(.active) .link-underline:before {
+.nav__list li.active .link-underline {
+  cursor: default;
+}
+
+.nav__list li.active .link-underline:before {
   opacity: 0;
 }
 
