@@ -24,7 +24,7 @@ export default class EventBus {
       error(`handler for ${event} event isn't a function`);
       return null;
     }
-    
+
     this.events[event](context);
   }
 }
