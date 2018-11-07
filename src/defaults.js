@@ -3,5 +3,6 @@ export default  {
   containerToSearchLinks: 'body',
   disableAttribute: 'data-ajax-disabled',
   saveBack: true,
-  scrollToTop: true
+  scrollToTop: true,
+  delayContentInsert: true
 }

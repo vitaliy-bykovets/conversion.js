@@ -268,16 +268,12 @@ p .link-underline {
   opacity: .7;
 }
 
-.transition.is-action,
+.transition.is-processing,
 .transition.is-stay {
   display: block;
 }
 
-.transition.is-action .transition__content {
-  animation: show 2000ms linear 500ms forwards;
-}
-
-.transition.is-action  .transition__anim {
+.transition.is-processing .transition__anim {
   animation: sideLeft 1000ms cubic-bezier(0.785, 0.135, 0.15, 0.86) 0s backwards;
 }
 
@@ -288,12 +284,24 @@ p .link-underline {
   100% { transform: scaleX(0); transform-origin: 100% 50%; }
 }
 
-@keyframes show {
+.transition.is-stay .transition__content {
+  visibility: visible;
+}
+
+.transition.is-enter .transition__content {
+  animation: enter 2000ms linear 500ms forwards;
+}
+
+@keyframes enter {
   0% { visibility: hidden; }
   100% { visibility: visible; }
 }
 
+.transition.is-leave .transition__content {
+  animation: leave 500ms linear 0ms forwards;
+}
 
-.transition.is-stay .transition__content {
-  visibility: visible;
+@keyframes leave {
+  0% { visibility: visible; }
+  100% { visibility: hidden; }
 }

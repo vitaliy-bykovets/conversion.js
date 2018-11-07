@@ -2,6 +2,7 @@ import defaults from './defaults';
 import {mergeOptions} from "./utils/object";
 import EventBus from "./components/eventBus";
 import {request} from "./components/request";
+import {isFunction} from "./utils/type";
 
 export default class Conversion {
   constructor(options) {
@@ -36,6 +37,10 @@ export default class Conversion {
 
   on(event, handler) {
     this._eventBus.on(event, handler);
+  }
+
+  emit(event) {
+    this._eventBus.emit(event);
   }
 
   disable() {
@@ -102,6 +107,16 @@ export default class Conversion {
       window.scrollTo(0, 0);
     }
 
+    if (this.options.delayContentInsert) {
+      this._eventBus.on('content.insert', () => {
+        this._insertContent(response, url);
+      })
+    } else {
+      this._insertContent(response, url);
+    }
+  }
+
+  _insertContent(response, url) {
     const fragment = this._getContentFragment(response);
     const responseContainer = fragment.querySelector(this.options.containerToInsert);
 
@@ -109,19 +124,10 @@ export default class Conversion {
 
     this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
-    if (this.options.saveBack) {
-      window.history.pushState(null, null, url);
-    }
-
-    if (this._isBack) {
-      this.oldLinks.pop();
-    } else {
-      this.oldLinks.push(url);
-    }
-
+    this._handleBackAction(url);
     this._initLinks();
+
     this._eventBus.emit('content.inserted', fragment);
-    this._isBack = false;
   }
 
   _getContentFail() {
@@ -133,6 +139,20 @@ export default class Conversion {
     fragment.innerHTML = content;
 
     return fragment;
+  }
+
+  _handleBackAction(url) {
+    if (this.options.saveBack) {
+      window.history.pushState(null, null, url);
+    }
+
+    if (this._isBack) {
+      this.oldLinks.pop();
+    } else {
+      this.oldLinks.push(url);
+    }
+
+    this._isBack = false;
   }
 
   get _lastOldLink() {

@@ -5,14 +5,27 @@ conversion.init();
 var transition = document.querySelector('.transition');
 var transitionAnimLayer = transition.querySelector('.transition__anim');
 
-transitionAnimLayer.addEventListener('animationend', function() {
-  transition.classList.remove('is-action');
-  transition.classList.add('is-stay');
+
+
+conversion.on('request.start', function() {
+  // listen when animation is ended
+  var animationStart = function() {
+    transition.classList.remove('is-processing', 'is-enter');
+    transition.classList.add('is-stay');
+
+    // insert content when animation has been finished
+    setTimeout(function() {
+      conversion.emit('content.insert');
+    });
+
+    transitionAnimLayer.removeEventListener('animationend', animationStart)
+  };
+
+  transitionAnimLayer.addEventListener('animationend', animationStart);
+  transition.classList.add('is-processing', 'is-enter');
 });
 
-conversion.on('request.start', function(oldContent) {
-  transition.classList.add('is-action');
-});
+
 
 
 conversion.on('request.success', function(oldContent) {
@@ -25,6 +38,8 @@ conversion.on('content.start', function(oldContent) {
 });
 
 
+
+
 // listen when content is inserted
 conversion.on('content.inserted', function(newContent) {
 
@@ -33,4 +48,16 @@ conversion.on('content.inserted', function(newContent) {
 
   // replace content which outside inserting container
   document.querySelector('.header').rem = newContent.getElementsByTagName('body')[0].classList;
+
+  // add class for second animation
+  // listen when animation is ended
+  var animationEnd = function() {
+    transition.classList.remove('is-processing', 'is-leave');
+    transition.classList.remove('is-stay');
+
+    transitionAnimLayer.removeEventListener('animationend', animationEnd)
+  };
+
+  transitionAnimLayer.addEventListener('animationend', animationEnd);
+  transition.classList.add('is-processing', 'is-leave');
 });

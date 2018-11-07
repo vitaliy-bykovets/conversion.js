@@ -9,7 +9,8 @@
     containerToSearchLinks: 'body',
     disableAttribute: 'data-ajax-disabled',
     saveBack: true,
-    scrollToTop: true
+    scrollToTop: true,
+    delayContentInsert: true
   };
 
   function mergeOptions(defaults, settings) {
@@ -163,6 +164,11 @@
         this._eventBus.on(event, handler);
       }
     }, {
+      key: "emit",
+      value: function emit(event) {
+        this._eventBus.emit(event);
+      }
+    }, {
       key: "disable",
       value: function disable() {
         this.disabled = true;
@@ -230,6 +236,8 @@
     }, {
       key: "_getContentSuccess",
       value: function _getContentSuccess(response, url) {
+        var _this2 = this;
+
         this._eventBus.emit('request.success');
         this._eventBus.emit('content.start');
 
@@ -237,6 +245,17 @@
           window.scrollTo(0, 0);
         }
 
+        if (this.options.delayContentInsert) {
+          this._eventBus.on('content.insert', function () {
+            _this2._insertContent(response, url);
+          });
+        } else {
+          this._insertContent(response, url);
+        }
+      }
+    }, {
+      key: "_insertContent",
+      value: function _insertContent(response, url) {
         var fragment = this._getContentFragment(response);
         var responseContainer = fragment.querySelector(this.options.containerToInsert);
 
@@ -244,19 +263,10 @@
 
         this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
-        if (this.options.saveBack) {
-          window.history.pushState(null, null, url);
-        }
-
-        if (this._isBack) {
-          this.oldLinks.pop();
-        } else {
-          this.oldLinks.push(url);
-        }
-
+        this._handleBackAction(url);
         this._initLinks();
+
         this._eventBus.emit('content.inserted', fragment);
-        this._isBack = false;
       }
     }, {
       key: "_getContentFail",
@@ -270,6 +280,21 @@
         fragment.innerHTML = content;
 
         return fragment;
+      }
+    }, {
+      key: "_handleBackAction",
+      value: function _handleBackAction(url) {
+        if (this.options.saveBack) {
+          window.history.pushState(null, null, url);
+        }
+
+        if (this._isBack) {
+          this.oldLinks.pop();
+        } else {
+          this.oldLinks.push(url);
+        }
+
+        this._isBack = false;
       }
     }, {
       key: "_lastOldLink",
