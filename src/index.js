@@ -2,7 +2,6 @@ import defaults from './defaults';
 import {mergeOptions} from "./utils/object";
 import EventBus from "./components/eventBus";
 import {request} from "./components/request";
-import {isFunction} from "./utils/type";
 
 export default class Conversion {
   constructor(options) {
@@ -30,6 +29,10 @@ export default class Conversion {
     this._initLinks();
     if (this.options.saveBack) this._initWindowPopStateHandler();
     this._eventBus.emit('init.finished');
+  }
+
+  updateLinks() {
+    this._initLinks();
   }
 
   update(options = {}) {
@@ -91,6 +94,7 @@ export default class Conversion {
 
     if (this._isDisableAjax(link, url)) return null;
     if (this._lastOldLink === url) return null;
+    if (this.disabled) return null;
 
     e.preventDefault();
     this._getContent(url);

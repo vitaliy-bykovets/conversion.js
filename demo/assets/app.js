@@ -1,11 +1,15 @@
+// init conversion.js
 var conversion = new Conversion();
 conversion.init();
 
-
+// get elements for animations
 var transition = document.querySelector('.transition');
 var transitionAnimLayer = transition.querySelector('.transition__anim');
 
+// listen when click is executed
 conversion.on('click.executed', function() {
+  console.info('Conversion.js: click.executed');
+
   // listen when animation is ended
   var animationStart = function() {
     transition.classList.remove('is-processing', 'is-enter');
@@ -24,24 +28,29 @@ conversion.on('click.executed', function() {
 });
 
 
-conversion.on('request.success', function(oldContent) {
-
+conversion.on('request.success', function() {
+  console.info('Conversion.js: request.success');
 });
 
 
 // listen when content inserting is started
-conversion.on('content.start', function(oldContent) {
+conversion.on('content.insert-started', function(oldContent) {
+  console.info('Conversion.js: content.insert-started');
 });
 
 
 // listen when content is inserted
 conversion.on('content.inserted', function(newContent) {
+  console.info('Conversion.js: content.inserted');
 
   // set new classes for body
   document.getElementsByTagName('body')[0].classList = newContent.getElementsByTagName('body')[0].classList;
 
-  // replace content which outside inserting container
-  document.querySelector('.header').rem = newContent.getElementsByTagName('body')[0].classList;
+  // replace header for active link
+  document.querySelector('.header').innerHTML = newContent.querySelector('.header').innerHTML;
+
+  // research all links
+  conversion.updateLinks();
 
   // add class for second animation
   // listen when animation is ended

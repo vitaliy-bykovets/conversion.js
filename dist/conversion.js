@@ -153,6 +153,11 @@
         this._eventBus.emit('init.finished');
       }
     }, {
+      key: "updateLinks",
+      value: function updateLinks() {
+        this._initLinks();
+      }
+    }, {
       key: "update",
       value: function update() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -225,6 +230,7 @@
 
         if (this._isDisableAjax(link, url)) return null;
         if (this._lastOldLink === url) return null;
+        if (this.disabled) return null;
 
         e.preventDefault();
         this._getContent(url);
