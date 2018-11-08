@@ -86,7 +86,7 @@ p .link-underline {
 }
 
 .bg-additional {
-  background-color: #f4fffc;
+  background-color: #fafffe;
 }
 
 .bg-accent {
@@ -108,7 +108,7 @@ p .link-underline {
   height: 100%;
   width: 100%;
   display: inline-block;
-  background-color: #f1d4ea;
+  background-color: #cfd3e6;
   z-index: 1;
   transform: scaleY(0.08);
   transform-origin: 0 100%;
@@ -248,7 +248,7 @@ p .link-underline {
   right: 0;
   bottom: 0;
   z-index: 6;
-  background-color: #f1d4ea;
+  background-color: #cfd3e6;
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
@@ -256,7 +256,7 @@ p .link-underline {
 .transition__content {
   height: 100%;
   width: 100%;
-  background-color: #fff6f4;
+  background-color: #fbfeff;
   align-items: center;
   justify-content: center;
   display: flex;
