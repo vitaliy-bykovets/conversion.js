@@ -5,9 +5,7 @@ conversion.init();
 var transition = document.querySelector('.transition');
 var transitionAnimLayer = transition.querySelector('.transition__anim');
 
-
-
-conversion.on('request.start', function() {
+conversion.on('click.executed', function() {
   // listen when animation is ended
   var animationStart = function() {
     transition.classList.remove('is-processing', 'is-enter');
@@ -15,7 +13,7 @@ conversion.on('request.start', function() {
 
     // insert content when animation has been finished
     setTimeout(function() {
-      conversion.emit('content.insert');
+      conversion.emit('request.activate');
     });
 
     transitionAnimLayer.removeEventListener('animationend', animationStart)
@@ -26,8 +24,6 @@ conversion.on('request.start', function() {
 });
 
 
-
-
 conversion.on('request.success', function(oldContent) {
 
 });
@@ -36,8 +32,6 @@ conversion.on('request.success', function(oldContent) {
 // listen when content inserting is started
 conversion.on('content.start', function(oldContent) {
 });
-
-
 
 
 // listen when content is inserted

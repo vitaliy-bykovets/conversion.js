@@ -25,6 +25,7 @@ export default class Conversion {
   }
 
   init() {
+    this._eventBus.emit('init.started');
     this._dom = this._initDom();
     this._initLinks();
     if (this.options.saveBack) this._initWindowPopStateHandler();
@@ -53,7 +54,6 @@ export default class Conversion {
 
   _initDom() {
     let dom = {};
-    dom.body = document.getElementsByTagName('body')[0];
     dom.containerToSearchLinks = document.querySelector(this.options.containerToSearchLinks);
     dom.containerToInsert = document.querySelector(this.options.containerToInsert);
     return dom;
@@ -77,46 +77,51 @@ export default class Conversion {
   _isDisableAjax(link, url) {
     return url.indexOf('#') >= 0 ||
       url.indexOf(this._hostName) < 0 ||
-      link.getAttribute(this.options.disableAttribute);
+      link.hasAttribute(this.options.disableAttribute);
   }
 
   _handleLink(link) {
-    const url = link.href;
-    if (this._isDisableAjax(link, url)) return null;
     link.addEventListener('click', this._handleLinkClick);
   }
 
   _handleLinkClick(e) {
-    e.preventDefault();
-    const url = e.currentTarget.href;
+
+    const link = e.currentTarget;
+    const url = link.href;
+
+    if (this._isDisableAjax(link, url)) return null;
     if (this._lastOldLink === url) return null;
+
+    e.preventDefault();
     this._getContent(url);
+    this._eventBus.emit('click.executed');
   }
 
   _getContent(url) {
-    this._eventBus.emit('request.start');
-
-    request(url, this._getContentSuccess, this._getContentFail);
+    if (this.options.delayContentInsert) {
+      this._eventBus.on('request.activate', () => {
+        this._eventBus.emit('request.start');
+        request(url, this._getContentSuccess, this._getContentFail);
+      })
+    } else {
+      this._eventBus.emit('request.start');
+      request(url, this._getContentSuccess, this._getContentFail);
+    }
   }
 
   _getContentSuccess(response, url) {
     this._eventBus.emit('request.success');
-    this._eventBus.emit('content.start');
 
     if (this.options.scrollToTop) {
       window.scrollTo(0, 0);
     }
 
-    if (this.options.delayContentInsert) {
-      this._eventBus.on('content.insert', () => {
-        this._insertContent(response, url);
-      })
-    } else {
-      this._insertContent(response, url);
-    }
+    this._insertContent(response, url);
   }
 
   _insertContent(response, url) {
+    this._eventBus.emit('content.insert-started', this._dom.containerToInsert.innerHTML);
+
     const fragment = this._getContentFragment(response);
     const responseContainer = fragment.querySelector(this.options.containerToInsert);
 

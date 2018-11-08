@@ -146,6 +146,7 @@
     createClass(Conversion, [{
       key: "init",
       value: function init() {
+        this._eventBus.emit('init.started');
         this._dom = this._initDom();
         this._initLinks();
         if (this.options.saveBack) this._initWindowPopStateHandler();
@@ -182,7 +183,6 @@
       key: "_initDom",
       value: function _initDom() {
         var dom = {};
-        dom.body = document.getElementsByTagName('body')[0];
         dom.containerToSearchLinks = document.querySelector(this.options.containerToSearchLinks);
         dom.containerToInsert = document.querySelector(this.options.containerToInsert);
         return dom;
@@ -209,53 +209,58 @@
     }, {
       key: "_isDisableAjax",
       value: function _isDisableAjax(link, url) {
-        return url.indexOf('#') >= 0 || url.indexOf(this._hostName) < 0 || link.getAttribute(this.options.disableAttribute);
+        return url.indexOf('#') >= 0 || url.indexOf(this._hostName) < 0 || link.hasAttribute(this.options.disableAttribute);
       }
     }, {
       key: "_handleLink",
       value: function _handleLink(link) {
-        var url = link.href;
-        if (this._isDisableAjax(link, url)) return null;
         link.addEventListener('click', this._handleLinkClick);
       }
     }, {
       key: "_handleLinkClick",
       value: function _handleLinkClick(e) {
-        e.preventDefault();
-        var url = e.currentTarget.href;
+
+        var link = e.currentTarget;
+        var url = link.href;
+
+        if (this._isDisableAjax(link, url)) return null;
         if (this._lastOldLink === url) return null;
+
+        e.preventDefault();
         this._getContent(url);
+        this._eventBus.emit('click.executed');
       }
     }, {
       key: "_getContent",
       value: function _getContent(url) {
-        this._eventBus.emit('request.start');
+        var _this2 = this;
 
-        request(url, this._getContentSuccess, this._getContentFail);
+        if (this.options.delayContentInsert) {
+          this._eventBus.on('request.activate', function () {
+            _this2._eventBus.emit('request.start');
+            request(url, _this2._getContentSuccess, _this2._getContentFail);
+          });
+        } else {
+          this._eventBus.emit('request.start');
+          request(url, this._getContentSuccess, this._getContentFail);
+        }
       }
     }, {
       key: "_getContentSuccess",
       value: function _getContentSuccess(response, url) {
-        var _this2 = this;
-
         this._eventBus.emit('request.success');
-        this._eventBus.emit('content.start');
 
         if (this.options.scrollToTop) {
           window.scrollTo(0, 0);
         }
 
-        if (this.options.delayContentInsert) {
-          this._eventBus.on('content.insert', function () {
-            _this2._insertContent(response, url);
-          });
-        } else {
-          this._insertContent(response, url);
-        }
+        this._insertContent(response, url);
       }
     }, {
       key: "_insertContent",
       value: function _insertContent(response, url) {
+        this._eventBus.emit('content.insert-started', this._dom.containerToInsert.innerHTML);
+
         var fragment = this._getContentFragment(response);
         var responseContainer = fragment.querySelector(this.options.containerToInsert);
 
