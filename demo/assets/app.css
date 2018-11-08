@@ -77,6 +77,7 @@ p .link-underline {
   justify-content: center;
 }
 
+/* Backgrounds */
 .bg-primary {
   background-color: #fff6f4;
 }
@@ -93,6 +94,7 @@ p .link-underline {
   background-color: #f3f3f3;
 }
 
+/* General */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -124,6 +126,7 @@ p .link-underline {
   transform: scaleY(1);
 }
 
+/* Header */
 .logo {
   max-width: 150px;
   display: flex;
@@ -168,6 +171,7 @@ p .link-underline {
   opacity: 0;
 }
 
+/* Sections */
 .section__title {
   font-family: 'Playfair Display', serif;
   font-size: 88px;
@@ -231,6 +235,8 @@ p .link-underline {
   color: rgba(12, 12, 12, 0.5);
 }
 
+
+/* Transition animation */
 .transition {
   position: fixed;
   top: 0;

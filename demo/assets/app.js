@@ -28,6 +28,7 @@ conversion.on('click.executed', function() {
 });
 
 
+// listen when request is successful
 conversion.on('request.success', function() {
   console.info('Conversion.js: request.success');
 });
