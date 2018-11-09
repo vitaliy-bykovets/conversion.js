@@ -1,6 +1,14 @@
 import { isFunction } from "../utils/type";
 import { error } from "../utils/log";
 
+/**
+ * XMLHttpRequest
+ *
+ * @param {String} url
+ * @param {Function} callback
+ * @param {Function} failCallback
+ * @returns {Void}
+ */
 export function request(url, callback, failCallback) {
 
   const xhttp = new XMLHttpRequest();

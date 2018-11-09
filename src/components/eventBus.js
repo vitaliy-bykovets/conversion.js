@@ -1,12 +1,25 @@
 import {isFunction} from "../utils/type";
 import {error} from  "../utils/log";
 
+/**
+ * Bus for event handlers
+ */
 export default class EventBus {
 
+  /**
+   * Constructor for EventBus
+   */
   constructor() {
     this.events = {};
   }
 
+  /**
+   * Add event listener
+   *
+   * @param event
+   * @param handler
+   * @returns {Void}
+   */
   on(event, handler) {
     if (isFunction(handler)) {
       this.events[event] = handler;
@@ -15,6 +28,13 @@ export default class EventBus {
     }
   }
 
+  /**
+   * Emit event
+   *
+   * @param event
+   * @param context
+   * @returns {Void}
+   */
   emit(event, context = {}) {
     if (!this.events[event]) {
       return null;
