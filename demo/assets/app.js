@@ -1,5 +1,7 @@
 // init conversion.js
-var conversion = new Conversion();
+var conversion = new Conversion({
+  delayContentInsert: true
+});
 conversion.init();
 
 // get elements for animations
