@@ -28,10 +28,10 @@ export default class Conversion {
    */
   init() {
     this._eventBus.emit('init.started');
+    this._bindMethods();
     this._dom = this._initDom();
     this._initLinks();
     if (this.options.saveBack) this._initWindowPopStateHandler();
-    this._bindMethods();
     this._eventBus.emit('init.finished');
 
     return this;

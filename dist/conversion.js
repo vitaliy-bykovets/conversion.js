@@ -5,22 +5,78 @@
 }(this, (function () { 'use strict';
 
   var defaults = {
+    /**
+     * Class for container where to insert container.
+     * This class also is used for searching new content in the response.
+     *
+     * @type {String}
+     */
     containerToInsert: '.js-content-insert',
+
+    /**
+     * A container where to search links
+     *
+     * @type {String}
+     */
     containerToSearchLinks: 'body',
+
+    /**
+     * An attribute for disabling ajax request
+     *
+     * @type {String}
+     */
     disableAttribute: 'data-ajax-disabled',
+
+    /**
+     * Handle browser history.
+     * Run a request when user click Back button
+     *
+     * @type {Boolean}
+     */
     saveBack: true,
+
+    /**
+     * Scroll a page to top after a request
+     *
+     * @type {Boolean}
+     */
     scrollToTop: true,
-    delayContentInsert: true
+
+    /**
+     * If a content should be inserted with delay.
+     * In this case content should be inserting using .emit('request.activate')
+     *
+     * @type {Boolean}
+     */
+    delayContentInsert: false
   };
 
+  /**
+   * Merge options
+   *
+   * @param {Object} defaults
+   * @param {Object} settings
+   * @returns {Object}
+   */
   function mergeOptions(defaults, settings) {
     return Object.assign({}, defaults, settings);
   }
 
+  /**
+   * Check if value is function
+   *
+   * @param value
+   * @returns {boolean}
+   */
   function isFunction(value) {
     return typeof value === 'function';
   }
 
+  /**
+   * Output error message
+   *
+   * @param {String} msg
+   */
   function error(msg) {
     console.error("conversion.js: " + msg);
   }
@@ -49,12 +105,29 @@
     };
   }();
 
+  /**
+   * Bus for event handlers
+   */
+
   var EventBus = function () {
+
+    /**
+     * Constructor for EventBus
+     */
     function EventBus() {
       classCallCheck(this, EventBus);
 
       this.events = {};
     }
+
+    /**
+     * Add event listener
+     *
+     * @param event
+     * @param handler
+     * @returns {Void}
+     */
+
 
     createClass(EventBus, [{
       key: "on",
@@ -65,6 +138,15 @@
           error("event handler isn't a function");
         }
       }
+
+      /**
+       * Emit event
+       *
+       * @param event
+       * @param context
+       * @returns {Void}
+       */
+
     }, {
       key: "emit",
       value: function emit(event) {
@@ -85,6 +167,14 @@
     return EventBus;
   }();
 
+  /**
+   * XMLHttpRequest
+   *
+   * @param {String} url
+   * @param {Function} callback
+   * @param {Function} failCallback
+   * @returns {Void}
+   */
   function request(url, callback, failCallback) {
 
     var xhttp = new XMLHttpRequest();
@@ -122,6 +212,11 @@
   }
 
   var Conversion = function () {
+    /**
+     * Constructor for Conversion
+     *
+     * @param {Object} options
+     */
     function Conversion(options) {
       classCallCheck(this, Conversion);
 
@@ -134,56 +229,125 @@
       this._isBack = false;
       this._hostName = window.location.hostname;
       this._dom = {};
-
-      this._isDisableAjax = this._isDisableAjax.bind(this);
-      this._handleLink = this._handleLink.bind(this);
-      this._handleLinkClick = this._handleLinkClick.bind(this);
-      this._getContentSuccess = this._getContentSuccess.bind(this);
-      this._getContentSuccess = this._getContentSuccess.bind(this);
-      this._getContentFail = this._getContentFail.bind(this);
     }
+
+    /**
+     * Initialize Conversion
+     *
+     * @return {Conversion}
+     */
+
 
     createClass(Conversion, [{
       key: "init",
       value: function init() {
         this._eventBus.emit('init.started');
+        this._bindMethods();
         this._dom = this._initDom();
         this._initLinks();
         if (this.options.saveBack) this._initWindowPopStateHandler();
         this._eventBus.emit('init.finished');
+
+        return this;
       }
+
+      /**
+       * Update link handlers
+       *
+       * @return {Conversion}
+       */
+
     }, {
       key: "updateLinks",
       value: function updateLinks() {
         this._initLinks();
+
+        return this;
       }
+
+      /**
+       * Update options
+       *
+       * @param options
+       * @returns {Conversion}
+       */
+
     }, {
       key: "update",
       value: function update() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         this.options = mergeOptions(defaults, options);
+
+        return this;
       }
+
+      /**
+       * Add event listener with callback
+       *
+       * @param {String} event
+       * @param {Function} handler
+       * @returns {Conversion}
+       */
+
     }, {
       key: "on",
       value: function on(event, handler) {
         this._eventBus.on(event, handler);
+
+        return this;
       }
+
+      /**
+       * Emit events which run Conversion functional
+       *
+       * @param {String} event
+       * @returns {Conversion}
+       */
+
     }, {
       key: "emit",
       value: function emit(event) {
         this._eventBus.emit(event);
+
+        return this;
       }
+
+      /**
+       * Disable Conversion (ajax transitions)
+       *
+       * @returns {Conversion}
+       */
+
     }, {
       key: "disable",
       value: function disable() {
         this.disabled = true;
+
+        return this;
       }
+
+      /**
+       * Enable Conversion (ajax transitions)
+       *
+       * @returns {Conversion}
+       */
+
     }, {
       key: "enable",
       value: function enable() {
         this.disabled = false;
+
+        return this;
       }
+
+      /**
+       * Get DOM elements
+       *
+       * @returns {Object}
+       * @private
+       */
+
     }, {
       key: "_initDom",
       value: function _initDom() {
@@ -192,6 +356,14 @@
         dom.containerToInsert = document.querySelector(this.options.containerToInsert);
         return dom;
       }
+
+      /**
+       * Get links and set handlers
+       *
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_initLinks",
       value: function _initLinks() {
@@ -199,6 +371,14 @@
         if (this.links.length <= 0) return null;
         Array.prototype.forEach.call(this.links, this._handleLink);
       }
+
+      /**
+       * Set handler for popstate. Browser history
+       *
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_initWindowPopStateHandler",
       value: function _initWindowPopStateHandler() {
@@ -211,16 +391,44 @@
           }
         };
       }
+
+      /**
+       * Check if ajax is disabled for link
+       *
+       * @param link
+       * @param url
+       * @returns {boolean}
+       * @private
+       */
+
     }, {
       key: "_isDisableAjax",
       value: function _isDisableAjax(link, url) {
         return url.indexOf('#') >= 0 || url.indexOf(this._hostName) < 0 || link.hasAttribute(this.options.disableAttribute);
       }
+
+      /**
+       * Set a handler for the link
+       *
+       * @param link
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_handleLink",
       value: function _handleLink(link) {
         link.addEventListener('click', this._handleLinkClick);
       }
+
+      /**
+       * Click executed. User click on the link
+       *
+       * @param {Event} e
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_handleLinkClick",
       value: function _handleLinkClick(e) {
@@ -236,6 +444,15 @@
         this._getContent(url);
         this._eventBus.emit('click.executed');
       }
+
+      /**
+       * Start to start request
+       *
+       * @param {String} url
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_getContent",
       value: function _getContent(url) {
@@ -251,6 +468,16 @@
           request(url, this._getContentSuccess, this._getContentFail);
         }
       }
+
+      /**
+       * Request is successful
+       *
+       * @param {String} response
+       * @param {String} url
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_getContentSuccess",
       value: function _getContentSuccess(response, url) {
@@ -262,6 +489,16 @@
 
         this._insertContent(response, url);
       }
+
+      /**
+       * Insert new content
+       *
+       * @param {String} response
+       * @param {String} url
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_insertContent",
       value: function _insertContent(response, url) {
@@ -274,16 +511,33 @@
 
         this._dom.containerToInsert.innerHTML = responseContainer.innerHTML;
 
-        this._handleBackAction(url);
+        this._setBackAction(url);
         this._initLinks();
 
         this._eventBus.emit('content.inserted', fragment);
       }
+
+      /**
+       * Request is failed
+       *
+       * @returns {Void}
+       * @private
+       */
+
     }, {
       key: "_getContentFail",
       value: function _getContentFail() {
         this._eventBus.emit('request.fail');
       }
+
+      /**
+       * Create fragment with new content
+       *
+       * @param content
+       * @returns {HTMLElement}
+       * @private
+       */
+
     }, {
       key: "_getContentFragment",
       value: function _getContentFragment(content) {
@@ -292,9 +546,19 @@
 
         return fragment;
       }
+
+      /**
+       * Set url to browser history
+       * Save url to old array.
+       *
+       * @param url
+       * @returns {Void}
+       * @private
+       */
+
     }, {
-      key: "_handleBackAction",
-      value: function _handleBackAction(url) {
+      key: "_setBackAction",
+      value: function _setBackAction(url) {
         if (this.options.saveBack) {
           window.history.pushState(null, null, url);
         }
@@ -307,11 +571,45 @@
 
         this._isBack = false;
       }
+
+      /**
+       * Bind Conversion context to methods
+       *
+       * @returns {Void}
+       * @private
+       */
+
+    }, {
+      key: "_bindMethods",
+      value: function _bindMethods() {
+        this._isDisableAjax = this._isDisableAjax.bind(this);
+        this._handleLink = this._handleLink.bind(this);
+        this._handleLinkClick = this._handleLinkClick.bind(this);
+        this._getContentSuccess = this._getContentSuccess.bind(this);
+        this._getContentSuccess = this._getContentSuccess.bind(this);
+        this._getContentFail = this._getContentFail.bind(this);
+      }
+
+      /**
+       * Gets the last link from old links
+       *
+       * @returns {Boolean|String}
+       * @private
+       */
+
     }, {
       key: "_lastOldLink",
       get: function get$$1() {
         return this.oldLinks.length > 0 && this.oldLinks[this.oldLinks.length - 1];
       }
+
+      /**
+       * Gets the previous link from old links
+       *
+       * @returns {Boolean|String}
+       * @private
+       */
+
     }, {
       key: "_prevOldLink",
       get: function get$$1() {
