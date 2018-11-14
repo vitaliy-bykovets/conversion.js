@@ -1,7 +1,14 @@
+/**
+ * conversion.js v0.0.0
+ * Copyright 2018-2018 Vitaliy Bykovets
+ * Released under the MIT License
+ * https://github.com/vitaliy-bykovets/conversion.js
+ **/
+
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Conversion = factory());
+  (global.conversion = global.conversion || {}, global.conversion.js = factory());
 }(this, (function () { 'use strict';
 
   var defaults = {
@@ -111,60 +118,60 @@
 
   var EventBus = function () {
 
-    /**
-     * Constructor for EventBus
-     */
-    function EventBus() {
-      classCallCheck(this, EventBus);
+      /**
+      * Constructor for EventBus
+      */
+      function EventBus() {
+          classCallCheck(this, EventBus);
 
-      this.events = {};
-    }
-
-    /**
-     * Add event listener
-     *
-     * @param event
-     * @param handler
-     * @returns {Void}
-     */
-
-
-    createClass(EventBus, [{
-      key: "on",
-      value: function on(event, handler) {
-        if (isFunction(handler)) {
-          this.events[event] = handler;
-        } else {
-          error("event handler isn't a function");
-        }
+          this.events = {};
       }
 
       /**
-       * Emit event
-       *
-       * @param event
-       * @param context
-       * @returns {Void}
-       */
+      * Add event listener
+      *
+      * @param event
+      * @param handler
+      * @returns {Void}
+      */
 
-    }, {
-      key: "emit",
-      value: function emit(event) {
-        var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-        if (!this.events[event]) {
-          return null;
-        }
+      createClass(EventBus, [{
+          key: 'on',
+          value: function on(event, handler) {
+              if (isFunction(handler)) {
+                  this.events[event] = handler;
+              } else {
+                  error('event handler isn\'t a function');
+              }
+          }
 
-        if (!isFunction(this.events[event])) {
-          error("handler for " + event + " event isn't a function");
-          return null;
-        }
+          /**
+          * Emit event
+          *
+          * @param event
+          * @param context
+          * @returns {Void}
+          */
 
-        this.events[event](context);
-      }
-    }]);
-    return EventBus;
+      }, {
+          key: 'emit',
+          value: function emit(event) {
+              var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+              if (!this.events[event]) {
+                  return null;
+              }
+
+              if (!isFunction(this.events[event])) {
+                  error('handler for ' + event + ' event isn\'t a function');
+                  return null;
+              }
+
+              this.events[event](context);
+          }
+      }]);
+      return EventBus;
   }();
 
   /**
@@ -177,38 +184,38 @@
    */
   function request(url, callback, failCallback) {
 
-    var xhttp = new XMLHttpRequest();
+      var xhttp = new XMLHttpRequest();
 
-    var pageLoaded = function pageLoaded() {
-      if (xhttp.status >= 200 && xhttp.status < 400) {
+      var pageLoaded = function pageLoaded() {
+          if (xhttp.status >= 200 && xhttp.status < 400) {
 
-        if (isFunction(callback)) {
-          callback(xhttp.responseText, url);
-        } else {
-          error('callback for request is not a function');
-        }
-      } else if (xhttp.status == 404) {
+              if (isFunction(callback)) {
+                  callback(xhttp.responseText, url);
+              } else {
+                  error('callback for request is not a function');
+              }
+          } else if (xhttp.status == 404) {
 
-        if (isFunction(failCallback)) {
-          failCallback(url);
-        } else {
-          error('fail callback for request is not a function');
-        }
-      }
-    };
+              if (isFunction(failCallback)) {
+                  failCallback(url);
+              } else {
+                  error('fail callback for request is not a function');
+              }
+          }
+      };
 
-    xhttp.addEventListener('load', pageLoaded);
+      xhttp.addEventListener('load', pageLoaded);
 
-    xhttp.onerror = function () {
-      if (isFunction(failCallback)) {
-        failCallback(url);
-      } else {
-        error('fail callback for request is not a function');
-      }
-    };
+      xhttp.onerror = function () {
+          if (isFunction(failCallback)) {
+              failCallback(url);
+          } else {
+              error('fail callback for request is not a function');
+          }
+      };
 
-    xhttp.open("GET", url, true);
-    xhttp.send();
+      xhttp.open('GET', url, true);
+      xhttp.send();
   }
 
   var Conversion = function () {

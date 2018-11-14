@@ -1,12 +1,13 @@
 import babel from 'rollup-plugin-babel';
-import { uglify } from "rollup-plugin-uglify";
+import { banner } from "./banner";
 
 export default {
   input: 'src/index.js',
   output: {
     file: 'dist/conversion.js',
     format: 'umd',
-    name: 'Conversion'
+    name: 'conversion.js',
+    banner
   },
   plugins: [
     babel({

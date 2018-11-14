@@ -1,8 +1,8 @@
 {
-  "name": "conversionjs",
+  "name": "conversion.js",
   "version": "0.0.0",
   "description": "Ajax page transition",
-  "main": "index.js",
+  "main": "dist/conversion.js",
   "scripts": {
     "watch": "npm-watch",
     "watch:dev": "node_modules/.bin/concurrently \"npm run watch\" \"npm run demo:server\"",
@@ -22,6 +22,10 @@
   ],
   "author": "Vitaliy Bykovets",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitaliy-bykovets/conversion.js"
+  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
