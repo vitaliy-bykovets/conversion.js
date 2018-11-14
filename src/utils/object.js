@@ -6,5 +6,5 @@
  * @returns {Object}
  */
 export function mergeOptions (defaults, settings) {
-  return Object.assign({}, defaults, settings)
+    return Object.assign({}, defaults, settings);
 }

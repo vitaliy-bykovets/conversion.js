@@ -4,8 +4,8 @@
  * @param {String} msg
  */
 export function error(msg) {
-  console.error(`conversion.js: ${msg}`);
-};
+    console.error(`conversion.js: ${msg}`);
+}
 
 /**
  * Output info message
@@ -13,5 +13,5 @@ export function error(msg) {
  * @param {String} msg
  */
 export function info(msg) {
-  console.info(`conversion.js: ${msg}`);
-};
+    console.info(`conversion.js: ${msg}`);
+}

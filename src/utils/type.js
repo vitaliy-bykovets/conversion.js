@@ -5,5 +5,5 @@
  * @returns {boolean}
  */
 export function isFunction (value) {
-  return typeof value === 'function';
+    return typeof value === 'function';
 }
