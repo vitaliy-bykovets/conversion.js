@@ -5,11 +5,9 @@
   "main": "dist/conversion.js",
   "scripts": {
     "watch": "npm-watch",
-    "watch:dev": "node_modules/.bin/concurrently \"npm run watch\" \"npm run demo:server\"",
     "build": "npm run build:dist && npm run build:dist:min",
     "build:dist": "node_modules/.bin/rollup --config config/rollup.config.js",
     "build:dist:min": "node_modules/.bin/rollup --config config/rollup.config.min.js",
-    "demo:server": "node_modules/.bin/browser-sync start -s 'demo' --serveStatic 'dist' -f 'demo/**/*.*' 'dist/conversion.js'",
     "lint": "node_modules/.bin/eslint src/**/*.js"
   },
   "watch": {
@@ -30,8 +28,6 @@
     "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
-    "browser-sync": "^2.26.3",
-    "concurrently": "^4.0.1",
     "eslint": "^5.9.0",
     "npm-watch": "^0.4.0",
     "rollup": "^0.66.6",
