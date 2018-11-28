@@ -1,7 +1,7 @@
 import defaults from './defaults';
-import {mergeOptions} from "./utils/object";
-import EventBus from "./components/eventBus";
-import {request} from "./components/request";
+import {mergeOptions} from './utils/object';
+import EventBus from './components/eventBus';
+import {request} from './components/request';
 
 export default class Conversion {
   /**
@@ -205,7 +205,7 @@ export default class Conversion {
       this._eventBus.on('request.activate', () => {
         this._eventBus.emit('request.start');
         request(url, this._getContentSuccess, this._getContentFail);
-      })
+      });
     } else {
       this._eventBus.emit('request.start');
       request(url, this._getContentSuccess, this._getContentFail);

@@ -1,4 +1,4 @@
-# conversion.js
+# conversion.js [![Build Status](https://travis-ci.com/vitaliy-bykovets/conversion.js.svg?branch=master)](https://travis-ci.com/vitaliy-bykovets/conversion.js)
 
 Simple dependency free Ajax page transition
 
