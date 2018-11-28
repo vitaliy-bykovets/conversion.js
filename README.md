@@ -7,7 +7,10 @@ Simple dependency free Ajax page transition
 ## Installation
 ## Documentation
 ## Browser support
-## Thanks
-## License
 
+
+## Thanks
+[Jędrzej Chałubek](https://jedrzejchalubek.com/) for code inspiration in [Glide.js](https://glidejs.com/)
+
+## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
