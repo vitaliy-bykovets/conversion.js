@@ -15,6 +15,5 @@
         ]
       ]
     }
-  },
-  "plugins": ["external-helpers"]
+  }
 }

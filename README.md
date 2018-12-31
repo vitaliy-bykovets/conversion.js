@@ -8,7 +8,6 @@ Simple dependency free Ajax page transition
 ## Documentation
 ## Browser support
 
-
 ## Thanks
 [Jędrzej Chałubek](https://jedrzejchalubek.com/) for code inspiration in [Glide.js](https://glidejs.com/)
 
